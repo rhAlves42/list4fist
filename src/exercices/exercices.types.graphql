@@ -1,0 +1,27 @@
+"""
+exercices.types.graphql
+"""
+type Query {
+    exercicesGetById(id: ID!) Exercices
+}
+
+type Mutation {
+    exercicesCreate(createExerciceInput: createExerciceInput!): Exercices!
+}
+
+type Exercices {
+    id: ID!
+    name: String!
+    level: String!
+    duration: String!
+    value: Number!
+    trainingType: Number!
+}
+
+input createExerciceInput {
+    name: String!
+    level: String!
+    duration: String!
+    value: Number!
+    trainingType: Number!
+}
