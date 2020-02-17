@@ -1,20 +1,11 @@
 import { Module } from '@nestjs/common';
-import { ExercicesService } from './exercices.service';
-import { ExercicesResolver } from './exercices.resolver';
 import { ExercicesController } from './exercices.controller';
-import { GraphQLModule } from '@nestjs/graphql';
-import { MongooseModule } from '@nestjs/mongoose';
+import { DatabaseModule } from 'src/database/database.module';
+import { exercicesProvider } from './exercices.provider';
 
 @Module({
-  imports: [
-    GraphQLModule.forRoot({
-    autoSchemaFile: 'schema.gql',
-   }),
-   MongooseModule.forRoot(
-     'mongodb://localhost/nestgraphql'
-    ),
-  ],
+  imports: [DatabaseModule],
   controllers: [ExercicesController],
-  providers: [ExercicesService, ExercicesResolver],
+  providers: [...exercicesProvider],
 })
 export class ExercicesModule {}
