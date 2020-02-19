@@ -1,23 +1,16 @@
-import { User, Status, RoleType } from './users.entity';
-import { IResponseMessages } from '../global.interfaces';
-import { Injectable } from '@nestjs/common';
-import { Repository, Transaction as TransactionDecorator } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Post, Body, Controller } from '@nestjs/common';
+import { UserService } from './users.service';
 
-@Injectable()
-export class UserService {
+
+@Controller('user')
+export class UserController {
     constructor (
-        @InjectRepository(User)
-        private readonly userRepository: Repository<User>,
+        private readonly userService: UserService,
     ) { }
-
-    private readonly responseMessages: IResponseMessages<User> = {
-        whenSaveSuccess: (user: User): object =>
-            Object({
-                message: 'Usuário salvo com sucesso',
-                email: user.email,
-            })
+    
+    @Post()
+    async createUser(@Body() data) {
+        const result = await this.userService.create(data);
+        return result;
     }
-
-    @TransactionDecorator()
 }
