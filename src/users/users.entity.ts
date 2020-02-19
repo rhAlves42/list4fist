@@ -20,16 +20,16 @@ export class User {
     @Column({
         length: 300, nullable: false
     })
-    name?: string;
+    name?: String;
 
    @Column({ length: 11, nullable: false })
-    phone?: string;
+    phone?: String;
 
     @Column({ length: 60, unique: true, nullable: false })
-    email?: string;
+    email?: String;
 
     @Column({ length: 32, nullable: false })
-    password?: string;
+    password?: String;
 
     @Column({
         type: 'enum',
@@ -44,7 +44,7 @@ export class User {
         length: '255',
         nullable: true,
     })
-    urlFrontagePhoto?: string;
+    urlFrontagePhoto?: String;
 
     @Column({ name: 'role', enum: RoleType, default: 1 })
     role?: RoleType;
