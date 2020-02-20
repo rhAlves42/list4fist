@@ -15,21 +15,21 @@ export enum RoleType {
 @Entity('users')
 export class User {
     @PrimaryGeneratedColumn()
-    id?: number;
+    id: number;
 
     @Column({
         length: 300, nullable: false
     })
-    name?: String;
+    name: String;
 
    @Column({ length: 11, nullable: false })
     phone?: String;
 
     @Column({ length: 60, unique: true, nullable: false })
-    email?: String;
+    email: String;
 
     @Column({ length: 32, nullable: false })
-    password?: String;
+    password: String;
 
     @Column({
         type: 'enum',

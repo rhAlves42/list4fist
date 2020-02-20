@@ -6,6 +6,7 @@ import {
 } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserInput } from './users.input';
+import { Model } from 'mongoose' 
 
 @Injectable()
 export class UserService {
