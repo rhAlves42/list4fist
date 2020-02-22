@@ -7,6 +7,9 @@ export const databaseProviders = [
     {
         provide: DATABASE_CONNECTION,
         useFactory: (): Promise<any> =>
-            mongoose.connect(KEYS.mongo_url, {useNewUrlParser: true}),
+            mongoose.connect(KEYS.mongo_url, {
+                useNewUrlParser: true,
+                useFindAndModify: false, 
+            }),
     }
 ];
