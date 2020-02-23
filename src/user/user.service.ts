@@ -42,7 +42,7 @@ export class UserService {
         return user;
     }
 
-    async edid (data: User) {
+    async edit (data: User) {
         delete data.password;
         const filter = { email: data.email };
         const update = data;

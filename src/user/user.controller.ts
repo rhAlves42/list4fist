@@ -54,7 +54,7 @@ export class UserController {
     @Put()
     async editUser(@Body() user: User) {
         await this.validatePayload(user);
-        return this.service.edid(user);
+        return this.service.edit(user);
     }
     
     @Delete('/delete')

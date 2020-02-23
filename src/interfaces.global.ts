@@ -4,3 +4,8 @@ export interface IResponseMessages<Entity> {
     whenRemoveSuccess?: () => object;
     whenImageUploadError?: (entity: Entity | string, details?: Error) => object;
   }
+
+export interface ILogin {
+  email: String;
+  password: String;
+}
