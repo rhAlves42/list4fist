@@ -9,3 +9,9 @@ export interface ILogin {
   email: String;
   password: String;
 }
+
+export interface IChangePassword {
+  email: String;
+  currentPassword?: String;
+  newPassword: String;
+}

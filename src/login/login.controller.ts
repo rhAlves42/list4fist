@@ -1,9 +1,21 @@
-import { Controller, Post, HttpCode, Body, HttpException, HttpStatus } from '@nestjs/common';
+import {
+    Controller,
+    Body,
+    Post,
+    Put,
+    HttpCode,
+    HttpException,
+    HttpStatus
+} from '@nestjs/common';
+
+import * as bcrypt from 'bcrypt';
+
 import { LoginService } from './login.service';
 import { UserService } from '../user/user.service';
-import { ILogin } from '../interfaces.global';
 import { User } from '../user/user.model';
-import * as bcrypt from 'bcrypt';
+import { validateChangePasswordData } from './login.validator';
+import { ILogin, IChangePassword } from '../interfaces.global';
+
 
 @Controller('login')
 export class LoginController {
@@ -15,6 +27,7 @@ export class LoginController {
     @Post()
     @HttpCode(200)
     async login(@Body() login: ILogin): Promise<any> {
+        
         const user: User = await this.userService.findUser(login.email);
         const hash = bcrypt.compareSync(login.password, user.password.toString())
         if (!user || !hash) {
@@ -32,5 +45,19 @@ export class LoginController {
             data,
             token
         };
+    }
+
+    @Put('change-password/')
+    async changePassord (@Body() data: IChangePassword) {
+        const invalidData = await validateChangePasswordData(data);
+        if (invalidData) {
+            throw new HttpException(invalidData.message, HttpStatus.BAD_REQUEST);
+        }        
+        const user: User = await this.userService.findUser(data.email);
+
+        const result  = user;
+        result.password = '';
+
+        return result;
     }
 }
