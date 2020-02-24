@@ -2,7 +2,6 @@ import {
     Controller,
     Body,
     Post,
-    Put,
     HttpCode,
     HttpException,
     HttpStatus
@@ -13,8 +12,7 @@ import * as bcrypt from 'bcrypt';
 import { LoginService } from './login.service';
 import { UserService } from '../user/user.service';
 import { User } from '../user/user.model';
-import { validateChangePasswordData } from './login.validator';
-import { ILogin, IChangePassword } from '../interfaces.global';
+import { ILogin } from '../interfaces.global';
 
 
 @Controller('login')
@@ -36,7 +34,7 @@ export class LoginController {
                 HttpStatus.UNAUTHORIZED,
             );
         }
-        const token = await this.loginService.singIn(user.email);
+        const token = await this.loginService.singIn({email: user.email.toString()});
 
         const data = user;
         data.password = ''; // paliativo ate descobrir outra forma
@@ -47,17 +45,4 @@ export class LoginController {
         };
     }
 
-    @Put('change-password/')
-    async changePassord (@Body() data: IChangePassword) {
-        const invalidData = await validateChangePasswordData(data);
-        if (invalidData) {
-            throw new HttpException(invalidData.message, HttpStatus.BAD_REQUEST);
-        }        
-        const user: User = await this.userService.findUser(data.email);
-
-        const result  = user;
-        result.password = '';
-
-        return result;
-    }
 }
