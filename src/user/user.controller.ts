@@ -12,8 +12,13 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './user.model';
-import { validateUser, validateChangePasswordData } from './users.validator';
-import { IChangePassword } from '../interfaces.global';
+import {
+    validateUser,
+    validateChangePasswordData,
+    validateForgotPasswordData,
+
+} from './users.validator';
+import { IChangePassword, IForgotPassword } from '../interfaces.global';
 import { validateUserPassword } from './user.utils';
 
 
@@ -97,6 +102,26 @@ export class UserController {
         });
 
         return result;
+    }
+
+    @Post('forgot-password/')
+    async forgotPassword (@Body() data: IForgotPassword) {
+        const { email } = data;
+        
+        const invalidData = await validateForgotPasswordData({ email });
+        if (invalidData) {
+            throw new HttpException(invalidData.message, HttpStatus.BAD_REQUEST);
+        }
+
+        const user = await this.findUser(email);
+        if (!user) {
+            throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        }
+
+        // TODO: Enviar email com o link de recuperar senha
+        // Possivel programa: Varrer um cod e criar tasks com base nos comentários
+        const linkRecover = 'https://recuperarsenha.com.br';
+        return linkRecover;
     }
     
 }

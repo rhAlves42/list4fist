@@ -43,7 +43,7 @@ export class UserService {
     }
      
     async findUser(email: String | string): Promise<User> {
-        const user = await this.userModel.findOne({email});
+        const user = await this.userModel.findOne({ email });
         return user;
     }
 

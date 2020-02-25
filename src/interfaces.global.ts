@@ -7,12 +7,16 @@ export interface IResponseMessages<Entity> {
   }
 
 export interface ILogin {
-  email: String;
-  password: String;
+  email: string | String;
+  password: string | String;
 }
 
 export interface IChangePassword {
+  email: string | String;
+  currentPassword?: string | String;
+  newPassword: string | String;
+}
+
+export interface IForgotPassword {
   email: String;
-  currentPassword?: String;
-  newPassword: String;
 }
