@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { User } from './user.model';
-import { IResponseMessages } from '../interfaces.global';
+import { IResponseMessages, IChangePassword } from '../interfaces.global';
 @Injectable()
 export class UserService {
     constructor (
@@ -24,6 +24,11 @@ export class UserService {
             Object({
                 message: 'User deleted!',
             }),
+        whenChangePasswordSucess: (user: User): object =>
+            Object({
+                message: 'Password Updated!',
+                data: user,
+            }),
     }
 
     async create(data: User) {
@@ -37,17 +42,17 @@ export class UserService {
         return result;
     }
      
-    async findUser(email: String) {
-        const user = await this.userModel.findOne({email});
+    async findUser(email: String | string): Promise<User> {
+        const user = await this.userModel.findOne({ email });
         return user;
     }
 
-    async edid (data: User) {
+    async edit (data: User) {
         delete data.password;
         const filter = { email: data.email };
         const update = data;
         const result = 
-            await this.userModel.findByIdAndUpdate(filter, update, { new: true });
+            await this.userModel.findOneAndUpdate(filter, update, { new: true });
         return this.responseMessages.whenUpdateSuccess(result);
     }
 
@@ -55,5 +60,19 @@ export class UserService {
         const user = await this.findUser(email);
         await this.userModel.deleteOne(user);
         return this.responseMessages.whenRemoveSuccess();
+    }
+
+    async changePassord(data: IChangePassword) {
+        const filter = { email: data.email };
+        const newCriptoPassword = bcrypt.hashSync(data.newPassword, 10);
+        const update = { password: newCriptoPassword }
+
+        const user = await this.userModel.findOneAndUpdate(
+            filter,
+            update,
+            { new: true },
+        );
+
+        return this.responseMessages.whenChangePasswordSucess(user);
     }
 }
