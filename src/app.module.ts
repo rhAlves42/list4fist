@@ -1,18 +1,23 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { MongooseModule } from '@nestjs/mongoose'
-import { KEYS } from './config';
+import { Module, DynamicModule } from '@nestjs/common';
 import { UserModule } from './user/user.module';
 import { LoginModule } from './login/login.module';
-import { defaultconfig } from './database/database.providers';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+let typeOrmModule: DynamicModule;
+
+function bootstrap(): DynamicModule {
+  if (!typeOrmModule) {
+    typeOrmModule = TypeOrmModule.forRoot();
+  }
+  return typeOrmModule;
+}
+
 @Module({
   imports: [
-    MongooseModule.forRoot(KEYS.mongo_url, defaultconfig),
+    bootstrap(),
     UserModule,
-    LoginModule,
+    LoginModule
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  providers: [],
 })
 export class AppModule {}

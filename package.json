@@ -23,15 +23,20 @@
     "@nestjs/common": "^6.10.14",
     "@nestjs/core": "^6.10.14",
     "@nestjs/mongoose": "^6.3.1",
+    "@nestjs/typeorm": "^6.3.3",
     "@nestjs/platform-express": "^6.10.14",
     "@types/lodash": "^4.14.149",
     "bcrypt": "^4.0.0",
+    "dotenv": "^8.2.0",
     "lodash": "^4.17.15",
+    "moment-timezone": "^0.5.28",
     "mongoose": "^5.9.2",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",
     "rxjs": "^6.5.4",
-    "yup": "^0.28.1"
+    "yup": "^0.28.1",
+    "serverless-dotenv-plugin": "^2.3.2",
+    "typeorm": "^0.2.24"
   },
   "devDependencies": {
     "@nestjs/cli": "^6.13.2",

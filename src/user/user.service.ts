@@ -1,78 +1,73 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-import { User } from './user.model';
+import { User, Status } from './user.entity';
 import { IResponseMessages, IChangePassword } from '../interfaces.global';
 @Injectable()
 export class UserService {
-    constructor (
-        @InjectModel('User') private readonly userModel: Model<User>,
-    ) { }
-    private readonly responseMessages: IResponseMessages<User> = {
-        whenSaveSuccess: (user: User): object =>
-            Object({
-                message: 'User created!',
-                email: user.email,
-            }),
-        whenUpdateSuccess: (user: User): object =>
-            Object({
-                message: 'User updated!',
-                data: user,
-            }),
-        whenRemoveSuccess: (): object =>
-            Object({
-                message: 'User deleted!',
-            }),
-        whenChangePasswordSucess: (user: User): object =>
-            Object({
-                message: 'Password Updated!',
-                data: user,
-            }),
-    }
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>) {}
+  private readonly responseMessages: IResponseMessages<User> = {
+    whenSaveSuccess: (user: User): object =>
+      Object({
+        message: 'User created!',
+        email: user.email,
+      }),
+    whenUpdateSuccess: (user: User): object =>
+      Object({
+        message: 'User updated!',
+        data: user,
+      }),
+    whenRemoveSuccess: (): object =>
+      Object({
+        message: 'User deleted!',
+      }),
+    whenChangePasswordSucess: (user: User): object =>
+      Object({
+        message: 'Password Updated!',
+        data: user,
+      }),
+  };
 
-    async create(data: User) {
-       data.password = bcrypt.hashSync(data.password, 10); // https://medium.com/@bhanushali.mahesh3/building-a-restful-crud-api-with-node-js-jwt-bcrypt-express-and-mongodb-4e1fb20b7f3d <- para comparacao de senhas 
-       const result = await new this.userModel(data).save();
-       return this.responseMessages.whenSaveSuccess(result);
-    }
+  async create(data: User) {
+    data.password = bcrypt.hashSync(data.password, 10); // https://medium.com/@bhanushali.mahesh3/building-a-restful-crud-api-with-node-js-jwt-bcrypt-express-and-mongodb-4e1fb20b7f3d <- para comparacao de senhas
+    const newUser =  new User();
+    newUser.password = data.password;
+    newUser.save();
+  }
 
-    async findAll() {
-        const result = await this.userModel.find();
-        return result;
-    }
-     
-    async findUser(email: String | string): Promise<User> {
-        const user = await this.userModel.findOne({ email });
-        return user;
-    }
+  async findAll() {
+    const result = await this.userRepository.find();
+    return result;
+  }
 
-    async edit (data: User) {
-        delete data.password;
-        const filter = { email: data.email };
-        const update = data;
-        const result = 
-            await this.userModel.findOneAndUpdate(filter, update, { new: true });
-        return this.responseMessages.whenUpdateSuccess(result);
-    }
+  async findUser(email: string): Promise<User> {
+    const user = await this.userRepository.findOne({ email });
+    return user;
+  }
 
-    async remove (email: String) {
-        const user = await this.findUser(email);
-        await this.userModel.deleteOne(user);
-        return this.responseMessages.whenRemoveSuccess();
-    }
+  async edit(data: User) {
+    delete data.password;
+    await this.userRepository.update(data.email, data);
+    // return this.responseMessages.whenUpdateSuccess(result);
+  }
 
-    async changePassord(data: IChangePassword) {
-        const filter = { email: data.email };
-        const newCriptoPassword = bcrypt.hashSync(data.newPassword, 10);
-        const update = { password: newCriptoPassword }
+  async remove(email: string) {
+    await this.userRepository.update(email, { status: Status.INACTIVE });
+  }
 
-        const user = await this.userModel.findOneAndUpdate(
-            filter,
-            update,
-            { new: true },
-        );
+  async changePassord(data: IChangePassword) {
+    const { email, dbPassword } = data;
 
-        return this.responseMessages.whenChangePasswordSucess(user);
-    }
+    const newCriptoPassword = bcrypt.hashSync(data.newPassword, 10);
+    const update = {
+      password: newCriptoPassword,
+      lastPasswordChangeDate: +new Date(),
+      lastPassword: dbPassword,
+    };
+
+    await this.userRepository.update(email, update);
+  }
 }

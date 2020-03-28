@@ -3,14 +3,13 @@ import { KEYS } from '../config';
 
 export const DATABASE_CONNECTION = 'DATABASE_CONNECTION';
 export const defaultconfig = {
-    useNewUrlParser: true,
-    useFindAndModify: false,
-    useUnifiedTopology: true,
-}
+  useNewUrlParser: true,
+  useFindAndModify: false,
+  useUnifiedTopology: true,
+};
 export const databaseProviders = [
-    {
-        provide: DATABASE_CONNECTION,
-        useFactory: (): Promise<any> =>
-            mongoose.connect(KEYS.mongo_url, defaultconfig),
-    }
+  {
+    provide: DATABASE_CONNECTION,
+    useFactory: (): Promise<any> => mongoose.connect(KEYS.mongo_url, defaultconfig),
+  },
 ];

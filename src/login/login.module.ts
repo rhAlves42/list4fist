@@ -8,19 +8,14 @@ import { LoginController } from './login.controller';
 import { JwtStrategy } from './jwt.strategy';
 
 const jwtRegister = JwtModule.register({
-    secret: JWT_KEY,
-    signOptions: { expiresIn: "15 days" }
-})
+  secret: JWT_KEY,
+  signOptions: { expiresIn: '15 days' },
+});
 
 @Module({
-    imports: [
-        PassportModule.register({ defaultStrategy: 'jwt' }),
-        jwtRegister,
-        UserModule,
-    ],
-    providers: [LoginService, JwtStrategy],
-    exports: [PassportModule, LoginService],
-    controllers: [LoginController],
+  imports: [PassportModule.register({ defaultStrategy: 'jwt' }), jwtRegister, UserModule],
+  providers: [LoginService, JwtStrategy],
+  exports: [PassportModule, LoginService],
+  controllers: [LoginController],
 })
-
 export class LoginModule {}
